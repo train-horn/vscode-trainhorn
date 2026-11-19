@@ -1,0 +1,28 @@
+name: Publish to Open VSX
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Extension-host smoke test
+        run: xvfb-run -a npm run test:integration
+      - name: Package
+        run: npx vsce package --no-dependencies -o trainhorn-sound-level.vsix
+      - name: Create namespace (no-op if it exists)
+        run: npx ovsx create-namespace train-horn -p "$OVSX_PAT" || true
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      - name: Publish
+        run: npx ovsx publish trainhorn-sound-level.vsix -p "$OVSX_PAT"
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
