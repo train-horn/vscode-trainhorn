@@ -1,7 +1,14 @@
 name: Publish to Open VSX
 
+# Trusted publishing (OIDC): no access token or secret is stored.
+# Registered on open-vsx.org -> Settings -> Trusted Publishers
+# (train-horn/vscode-trainhorn, workflow publish.yml, no environment).
 on:
   workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   publish:
@@ -18,11 +25,5 @@ jobs:
         run: xvfb-run -a npm run test:integration
       - name: Package
         run: npx vsce package --no-dependencies -o trainhorn-sound-level.vsix
-      - name: Create namespace (no-op if it exists)
-        run: npx ovsx create-namespace train-horn -p "$OVSX_PAT" || true
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
-      - name: Publish
-        run: npx ovsx publish trainhorn-sound-level.vsix -p "$OVSX_PAT"
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      - name: Publish (trusted publishing, ovsx >= 1.4)
+        run: npx ovsx publish trainhorn-sound-level.vsix --trusted-publishing
