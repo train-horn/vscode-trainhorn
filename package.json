@@ -1,0 +1,52 @@
+{
+  "name": "trainhorn-sound-level",
+  "displayName": "Train Horn Sound Level",
+  "description": "Estimate horn sound level at any distance (inverse-square law): 150 dB at 10 ft is about 130 dB at 100 ft. Commands plus hover tables for ratings like \"150 dB @ 10 ft\".",
+  "version": "1.0.0",
+  "publisher": "train-horn",
+  "author": { "name": "Train Horn", "url": "https://train-horn.com/" },
+  "license": "MIT",
+  "homepage": "https://train-horn.com/",
+  "repository": { "type": "git", "url": "https://github.com/train-horn/vscode-trainhorn.git" },
+  "bugs": { "url": "https://github.com/train-horn/vscode-trainhorn/issues" },
+  "icon": "images/icon.png",
+  "galleryBanner": { "color": "#1f2937", "theme": "dark" },
+  "engines": { "vscode": "^1.75.0" },
+  "categories": ["Other", "Education"],
+  "keywords": ["decibel", "sound level", "spl", "inverse square law", "train horn", "acoustics", "noise"],
+  "main": "./src/extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "commands": [
+      { "command": "trainhorn.soundLevelAtDistance", "title": "Sound level at distance", "category": "Train Horn" },
+      { "command": "trainhorn.distanceForLevel", "title": "Distance for target level", "category": "Train Horn" }
+    ],
+    "configuration": {
+      "title": "Train Horn Sound Level",
+      "properties": {
+        "trainhorn.defaultUnit": {
+          "type": "string",
+          "enum": ["ft", "m"],
+          "default": "ft",
+          "description": "Distance unit used when you type a number without ft or m."
+        },
+        "trainhorn.hover.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a level-by-distance table when hovering ratings such as \"150 dB @ 10 ft\" in any file."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "test": "mocha \"test/unit/**/*.test.js\"",
+    "test:integration": "node test/integration/runTest.js",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.1.1",
+    "mocha": "^10.8.2",
+    "ovsx": "^1.4.0"
+  }
+}
